@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EShop.Domain.CreditCardExceptions;
 
 namespace EShop.Application.Services
 {
-    public class CreditCardService
+    public class CreditCardService : ICreditCardService
     {
 
         public Boolean ValidateCardNumber(string cardNumber)
@@ -15,6 +16,17 @@ namespace EShop.Application.Services
             cardNumber = cardNumber.Replace(" ", "").Replace("-", "");
             if (!cardNumber.All(char.IsDigit))
                 return false;
+
+            //to miejsce wydaje się lepsze - po usunięciu znaków typu spacja i dash
+            if (cardNumber.Length < 13)
+            {
+                throw new CardNumberTooShortException();
+            }
+            if (cardNumber.Length > 19)
+            {
+                throw new CardNumberTooLongException();
+            }
+
 
             int sum = 0;
             bool alternate = false;
@@ -62,7 +74,8 @@ namespace EShop.Application.Services
             if (Regex.IsMatch(cardNumber, @"^(50|5[6-9]|6\d)\d{10,17}$"))
                 return "Maestro";
 
-            return "Unknown";
+            else
+                throw new CardNumberInvalidException();
         }
     }
 }

@@ -4,23 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EShop.Application.Services;
+using EShop.Domain.CreditCardExceptions;
 
 namespace EShop.Application.Tests.Services
 {
     public class CreditCardServiceTest
     {
         [Fact]
-        public void ValidateCard_CheckCardToShortLength_ReturnFalse()
+        public void ValidateCard_CheckExceptionsTooShortLength_ReturnTrue()
         {
             // Arrange
             var creditCardService = new CreditCardService();
             string cardNumber = "1212";
 
-            // Act
-            var result = creditCardService.ValidateCardNumber(cardNumber);
 
-            // Assert
-            Assert.False(result);
+            // Act & Assert
+            Assert.Throws<CardNumberTooShortException>(() => creditCardService.ValidateCardNumber(cardNumber));
         }
 
 
@@ -39,17 +38,15 @@ namespace EShop.Application.Tests.Services
         }
 
         [Fact]
-        public void ValidateCard_CheckCardToLongLength_ReturnFalse()
+        public void ValidateCard_CheckExceptionsTooLongLength_ReturnTrue()
         {
             // Arrange
             var creditCardService = new CreditCardService();
             string cardNumber = "349779658312797349779658312797";
 
-            // Act
-            var result = creditCardService.ValidateCardNumber(cardNumber);
 
-            // Assert
-            Assert.False(result);
+            // Act && Assert
+            Assert.Throws<CardNumberTooLongException>(() => creditCardService.ValidateCardNumber(cardNumber));  
         }
 
         [Theory]
@@ -84,7 +81,6 @@ namespace EShop.Application.Tests.Services
         [InlineData("5530016454538418", "MasterCard")]
         [InlineData("5551561443896215", "MasterCard")]
         [InlineData("5131208517986691", "MasterCard")]
-        [InlineData("", "Unknown")]
         public void ValidateCard_CheckGetCardType_ReturnTrue(string cardNumber, string cardType)
         {
             // Arrange
@@ -95,6 +91,17 @@ namespace EShop.Application.Tests.Services
 
             // Assert
             Assert.Equal(result, cardType);
+        }
+
+        [Fact]
+        public void ValidateCard_CardNumberInvalidException_ReturnTrue()
+        {
+            // Arrange
+            var creditCardService = new CreditCardService();
+            string cardNumber = "2574-7338-8857-5590";
+
+            // Act && Assert
+            Assert.Throws<CardNumberInvalidException>(() => creditCardService.GetCardType(cardNumber));
         }
     }
 }
