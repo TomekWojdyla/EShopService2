@@ -1,11 +1,17 @@
 
+using EShop.Application.Services;
+
 namespace EShopService
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
+
+            // Add services to the container.
+            builder.Services.AddScoped<ICreditCardService, CreditCardService>();
 
             // Add services to the container.
 
