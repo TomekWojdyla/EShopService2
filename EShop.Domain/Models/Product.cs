@@ -1,6 +1,6 @@
 ﻿namespace EShop.Domain.Models
 {
-    public class Product
+    public class Product : BaseModel
     {
         public int Id { get; set; }
 
