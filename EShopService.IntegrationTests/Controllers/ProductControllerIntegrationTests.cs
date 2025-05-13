@@ -44,7 +44,7 @@ public class ProductControllerIntegrationTests : IClassFixture<WebApplicationFac
     }
 
     [Fact]
-    public async Task Get_ReturnsAllProducts()
+    public async Task Get_ReturnsAllProducts_ExpectedTwoProducts()
     {
         // Arrange
         using (var scope = _factory.Services.CreateScope())
