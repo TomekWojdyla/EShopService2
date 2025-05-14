@@ -5,15 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using EShop.Domain.Models;
 using EShop.Domain.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace EShop.Application.Services;
 
 public class ProductService : IProductService
 {
     private IRepository _repository;
-    public ProductService(IRepository repository)
+    private IMemoryCache _cache;
+
+    public ProductService(IRepository repository, IMemoryCache cache)
     {
         _repository = repository;
+        _cache = cache;
     }
 
     public async Task<List<Product>> GetAllAsync()
@@ -25,14 +29,24 @@ public class ProductService : IProductService
 
     public async Task<Product> GetAsync(int id)
     {
-        var result = await _repository.GetProductAsync(id);
+        string key = $"Product:{id}";
+        if (!_cache.TryGetValue(key, out Product? product))
+        {
+            product = await _repository.GetProductAsync(id);
 
-        return result;
+            var options = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1));
+
+            _cache.Set(key, product, options);
+        }
+        return product;
     }
 
     public async Task<Product> UpdateAsync(Product product)
     {
         var result = await _repository.UpdateProductAsync(product);
+
+        string key = $"Product:{product.Id}"; 
+        _cache.Remove(key);
 
         return result;
     }

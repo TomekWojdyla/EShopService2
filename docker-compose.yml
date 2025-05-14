@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  eshopservice:
+    image: ${DOCKER_REGISTRY-}eshopservice
+    build:
+      context: .
+      dockerfile: EShopService/Dockerfile
+

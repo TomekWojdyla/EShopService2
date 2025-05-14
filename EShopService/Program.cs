@@ -25,6 +25,8 @@ namespace EShopService
             builder.Services.AddScoped<IEShopSeeder, EShopSeeder>();
 
 
+            //memory cache
+            builder.Services.AddMemoryCache();
 
 
 

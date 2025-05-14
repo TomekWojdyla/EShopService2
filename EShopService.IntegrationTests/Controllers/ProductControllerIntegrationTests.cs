@@ -76,25 +76,36 @@ public class ProductControllerIntegrationTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task Post_AddTenThousandProductsAsync_ExpectedTenThousandProducts()
     // tak naprawde nie testuję posta tylko get'a a test jest na asynchronicznym dodawaniu elementó do DBContextu
-    {     
-    // Arrange
+    {
+        // Arrange
         using (var scope = _factory.Services.CreateScope())
         {
             // Pobranie kontekstu bazy danych
             var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
             dbContext.Products.RemoveRange(dbContext.Products);
-
-            // Stworzenie 1000 obiektów
-
-            for (int i = 0; i < 10000; i++)
-            {
-                dbContext.Products.Add(new Product { Name = $"Product{i}" });
-                // Zapisanie obiektu
-                await dbContext.SaveChangesAsync();
-            }
+            await dbContext.SaveChangesAsync();
 
         }
+
+        var tasks = new List<Task>(); // Lista zadań do uruchomienia równolegle
+
+        // Stworzenie 10000 obiektów
+        for (int i = 0; i < 10000; i++)
+        {
+
+            tasks.Add(Task.Run(async () =>
+            {
+                using (var scope = _factory.Services.CreateScope())
+                {
+                    // Pobranie kontekstu bazy danych
+                    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+                    dbContext.Products.Add(new Product { Name = $"Product{i}" });
+                    await dbContext.SaveChangesAsync();
+                }
+            }));
+        }
+        await Task.WhenAll(tasks); // Czekamy na zakończenie wszystkich zadań
 
         // Act
         var response = await _client.GetAsync("/api/product");
@@ -117,17 +128,26 @@ public class ProductControllerIntegrationTests : IClassFixture<WebApplicationFac
             var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
             dbContext.Products.RemoveRange(dbContext.Products);
+            await dbContext.SaveChangesAsync();
+        }
+            var tasks = new List<Task>(); // Lista zadań do uruchomienia równolegle 
 
-            // Stworzenie 1000 obiektów
-
+            // Stworzenie 10000 obiektów
             for (int i = 0; i < 10000; i++)
             {
-                dbContext.Products.Add(new Product { Name = $"Product{i}" });
-                // Zapisanie obiektu
-                dbContext.SaveChangesAsync();
-            }
 
-        }
+                tasks.Add(Task.Run(async () =>
+                {
+                    using (var scope = _factory.Services.CreateScope())
+                    {
+                        var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+                        dbContext.Products.Add(new Product { Name = $"Product{i}" });
+                        dbContext.SaveChanges();
+                    }
+                }));
+            }
+            await Task.WhenAll(tasks); // Czekamy na zakończenie wszystkich zadań
+
 
         // Act
         var response = await _client.GetAsync("/api/product");
