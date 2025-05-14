@@ -43,4 +43,11 @@ public class ProductService : IProductService
 
         return result;
     }
+
+    public Product Add(Product product)
+    {
+        var result = _repository.AddProductAsync(product).Result;
+
+        return result;
+    }
 }

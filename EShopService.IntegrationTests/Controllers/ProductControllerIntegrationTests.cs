@@ -10,6 +10,7 @@ using EShopService.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 
 namespace EShopService.IntegrationTests.Controllers;
@@ -70,5 +71,101 @@ public class ProductControllerIntegrationTests : IClassFixture<WebApplicationFac
         response.EnsureSuccessStatusCode();
         var products = await response.Content.ReadFromJsonAsync<List<Product>>();
         Assert.Equal(2, products?.Count);
+    }
+
+    [Fact]
+    public async Task Post_AddTenThousandProductsAsync_ExpectedTenThousandProducts()
+    // tak naprawde nie testuję posta tylko get'a a test jest na asynchronicznym dodawaniu elementó do DBContextu
+    {     
+    // Arrange
+        using (var scope = _factory.Services.CreateScope())
+        {
+            // Pobranie kontekstu bazy danych
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            dbContext.Products.RemoveRange(dbContext.Products);
+
+            // Stworzenie 1000 obiektów
+
+            for (int i = 0; i < 10000; i++)
+            {
+                dbContext.Products.Add(new Product { Name = $"Product{i}" });
+                // Zapisanie obiektu
+                await dbContext.SaveChangesAsync();
+            }
+
+        }
+
+        // Act
+        var response = await _client.GetAsync("/api/product");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var products = await response.Content.ReadFromJsonAsync<List<Product>>();
+        Assert.Equal(10000, products?.Count);
+    }
+
+
+    [Fact]
+    public async Task Post_AddTenThousandProducts_ExpectedTenThousandProducts()
+    // tak naprawde nie testuję posta tylko get'a a test jest na synchronicznym dodawaniu elementów do DBContextu
+    {
+        // Arrange
+        using (var scope = _factory.Services.CreateScope())
+        {
+            // Pobranie kontekstu bazy danych
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            dbContext.Products.RemoveRange(dbContext.Products);
+
+            // Stworzenie 1000 obiektów
+
+            for (int i = 0; i < 10000; i++)
+            {
+                dbContext.Products.Add(new Product { Name = $"Product{i}" });
+                // Zapisanie obiektu
+                dbContext.SaveChangesAsync();
+            }
+
+        }
+
+        // Act
+        var response = await _client.GetAsync("/api/product");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var products = await response.Content.ReadFromJsonAsync<List<Product>>();
+        Assert.Equal(10000, products?.Count);
+    }
+
+
+    [Fact]
+    public async Task Add_AddProduct_ExpectedOneProduct()
+    {
+        // Arrange
+        using (var scope = _factory.Services.CreateScope())
+        {
+            // Pobranie kontekstu bazy danych
+            var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            dbContext.Products.RemoveRange(dbContext.Products);
+            dbContext.SaveChanges();
+
+            // Act
+
+            //tworze product
+            var product = new Product { Name = "Product1", Category = new Category { Name = "Category1" } };
+
+            var jsonContent = JsonConvert.SerializeObject(product);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            var response = await _client.PatchAsync("/api/product", content);
+
+            var result = await dbContext.Products.ToListAsync();
+
+            // Assert
+
+            Assert.Equal(1, result?.Count);
+        }
     }
 }
