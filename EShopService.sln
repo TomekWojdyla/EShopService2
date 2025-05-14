@@ -21,6 +21,14 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User", "User", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EShop", "EShop", "{99372DF6-D8E2-4258-AAA2-55519594AF4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService", "UserService\UserService.csproj", "{CCFD15AD-6295-4B16-AC51-396F01D6E2D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Domain", "User.Domain\User.Domain.csproj", "{E4E7189D-E5E3-4147-AB3E-269325B41FD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Application", "User.Application\User.Application.csproj", "{729298AD-B23A-4472-984C-6C3B3369B62D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +67,18 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCFD15AD-6295-4B16-AC51-396F01D6E2D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCFD15AD-6295-4B16-AC51-396F01D6E2D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCFD15AD-6295-4B16-AC51-396F01D6E2D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCFD15AD-6295-4B16-AC51-396F01D6E2D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4E7189D-E5E3-4147-AB3E-269325B41FD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4E7189D-E5E3-4147-AB3E-269325B41FD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4E7189D-E5E3-4147-AB3E-269325B41FD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4E7189D-E5E3-4147-AB3E-269325B41FD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{729298AD-B23A-4472-984C-6C3B3369B62D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{729298AD-B23A-4472-984C-6C3B3369B62D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{729298AD-B23A-4472-984C-6C3B3369B62D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{729298AD-B23A-4472-984C-6C3B3369B62D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
