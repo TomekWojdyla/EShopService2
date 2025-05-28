@@ -9,6 +9,10 @@ using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using EShop.Domain.Repositories;
+using User.Domain.Profiles;
+using EShop.Domain.Seeders;
+using User.Domain.Seeders;
+using User.Domain.Repositories;
 
 
 namespace UserService;
@@ -19,7 +23,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddDbContext<DbContext>(x=>x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
+        builder.Services.AddDbContext<User.Domain.Repositories.DbContext>(x=>x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
 
         // JWT config
         var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -65,6 +69,11 @@ public class Program
         // Add services to the container.
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddScoped<ILoginService, LoginService>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IUserService, User.Application.Services.UserService>();
+        builder.Services.AddScoped<IUserSeeder, UserSeeder>();
+
+        builder. Services.AddAutoMapper(typeof(MappingProfile));
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -122,6 +131,10 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
+
+        var scope = app.Services.CreateScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
+        seeder.Seed();
 
         app.Run();
     }
