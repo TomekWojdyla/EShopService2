@@ -29,6 +29,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Domain", "User.Domain\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Application", "User.Application\User.Application.csproj", "{729298AD-B23A-4472-984C-6C3B3369B62D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{5D7AE53C-E9EA-4FFC-96AC-32566CD39BFF}"
+	ProjectSection(SolutionItems) = preProject
+		UserService\data\private.key = UserService\data\private.key
+		UserService\data\public.key = UserService\data\public.key
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

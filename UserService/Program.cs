@@ -6,6 +6,9 @@ using User.Domain.Models.JWT;
 using User.Domain.Models.Requests;
 using User.Application.Services;
 using Microsoft.OpenApi.Models;
+using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
+using EShop.Domain.Repositories;
 
 
 namespace UserService;
@@ -15,6 +18,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddDbContext<DbContext>(x=>x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
 
         // JWT config
         var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -27,6 +32,13 @@ public class Program
         })
         .AddJwtBearer(options =>
         {
+            var rsa = RSA.Create();
+            string keyPath = Path.Combine(AppContext.BaseDirectory, "data", "public.key");
+            keyPath = Path.GetFullPath(keyPath); // przekszta³ca na absolutn¹ œcie¿kê
+            //rsa.ImportFromPem(File.ReadAllText("../data/public.key"));
+            rsa.ImportFromPem(File.ReadAllText(keyPath));
+            var publicKey = new RsaSecurityKey(rsa);
+            
             var jwtConfig = jwtSettings.Get<JwtSettings>();
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -36,7 +48,8 @@ public class Program
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = jwtConfig.Issuer,
                 ValidAudience = jwtConfig.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key))
+                //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.Key)) -> Token JWT
+                IssuerSigningKey = publicKey
             };
         });
 

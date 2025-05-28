@@ -25,6 +25,18 @@ public class LoginService : ILoginService
             var token = _jwtTokenService.GenerateToken(123, roles);
             return token;
         }
+        else if (username == "employee" && password == "haslo")
+        {
+            var roles = new List<string> { "Client", "Employee" };
+            var token = _jwtTokenService.GenerateToken(456, roles);
+            return token;
+        }
+        else if (username == "client" && password == "haslo")
+        {
+            var roles = new List<string> { "Client" };
+            var token = _jwtTokenService.GenerateToken(789, roles);
+            return token;
+        }
         else
         {
             throw new InvalidCredentialsException();
