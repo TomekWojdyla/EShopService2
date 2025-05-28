@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using EShop.Domain.Repositories;
+using User.Domain.Models.Profiles;
 
 
 namespace UserService;
@@ -65,6 +66,9 @@ public class Program
         // Add services to the container.
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddScoped<ILoginService, LoginService>();
+        builder.Services.AddScoped<IUserService, User.Application.Services.UserService>();
+
+        builder.Services.AddAutoMapper(typeof(MappingProfile));
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
